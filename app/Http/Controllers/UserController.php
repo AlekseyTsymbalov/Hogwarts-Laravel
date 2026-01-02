@@ -4,17 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class UserController extends Controller
 {
     /**
      * Показать профиль конкретного пользователя.
      */
-    public function signin(Request $request): View
+    public function signin(Request $request): User
     {
-        echo "<pre>";
-        var_dump($request);
-        die();
+        $user = User::whereEmail($request->email)->first();
+        if (!$user) {
+            throw new RuntimeException('User not found');
+        }
+
+        if (!Hash::check($request->password, $user->password )) {
+            throw new RuntimeException('Password is incorrect');
+        }
+
+        Auth::login($user);
+
+        return $user;
     }
 }
