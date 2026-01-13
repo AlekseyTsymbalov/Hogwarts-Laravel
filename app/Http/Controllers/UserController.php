@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RuntimeException;
-
+use DomainException;
 class UserController extends Controller
 {
     /**
@@ -27,5 +27,10 @@ class UserController extends Controller
         Auth::login($user);
 
         return $user;
+    }
+
+    public function testException()
+    {
+        throw new DomainException('Тестовая сгенерированная ошибка');
     }
 }

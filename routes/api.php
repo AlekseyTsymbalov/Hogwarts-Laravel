@@ -4,3 +4,4 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/signin', [UserController::class, 'signin']);
+Route::get('/test-error', [UserController::class, 'testException']);
