@@ -27,6 +27,13 @@
 
     <div>
         <label>
+            Телефон:
+            <input type="text" name="phone" required>
+        </label>
+    </div>
+
+    <div>
+        <label>
             Пароль:
             <input type="password" name="password" required>
         </label>
