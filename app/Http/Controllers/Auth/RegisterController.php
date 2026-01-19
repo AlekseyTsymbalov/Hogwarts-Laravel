@@ -5,17 +5,16 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 
 class RegisterController extends Controller
 {
-    public function show(): View
-    {
-        return view('auth.register');
-    }
+//    public function show(): View
+//    {
+//        return view('auth.register');
+//    }
 
-    public function store(Request $request): RedirectResponse
+    public function register(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -24,13 +23,22 @@ class RegisterController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed']
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'password' => $validated['password'],
         ]);
 
-        return redirect('/');
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+            ],
+            'error' => null,
+        ], 201);
     }
 }
