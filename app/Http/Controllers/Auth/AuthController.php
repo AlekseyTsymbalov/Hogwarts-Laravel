@@ -15,7 +15,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->notFoundResponse('Invalid credentials');
+            return $this->unauthorizedResponse([], 'Invalid credentials');
         }
 
         $token = $user->createToken('api')->plainTextToken;
