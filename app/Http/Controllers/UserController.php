@@ -13,8 +13,4 @@ class UserController extends Controller
     /**
      * Показать профиль конкретного пользователя.
      */
-    public function testException()
-    {
-        throw new DomainException('Тестовая сгенерированная ошибка');
-    }
 }
