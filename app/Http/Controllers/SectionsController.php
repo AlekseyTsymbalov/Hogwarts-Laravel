@@ -12,18 +12,20 @@ class SectionsController extends Controller
             ->where('active', true)
             ->orderBy('sort')
             ->get();
+
+        return $this->okResponse($sections);
     }
 
     public function detail(int $id)
     {
-        $sections = Section::query()
+        $section = Section::query()
             ->where('active', true)
             ->find($id);
 
-        if (!$sections) {
+        if (!$section) {
             return $this->notFoundResponse();
         }
 
-        return $this->okResponse($sections);
+        return $this->okResponse($section);
     }
 }
