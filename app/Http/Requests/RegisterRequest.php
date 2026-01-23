@@ -14,6 +14,14 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('phone')) {
+            $this->merge([
+                'phone' => preg_replace('/\D+/', '', $this->input('phone')),
+            ]);
+        }
+    }
     /**
      * Get the validation rules that apply to the request.
      *
