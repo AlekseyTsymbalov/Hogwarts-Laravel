@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/sections', [SectionsController::class, 'list']);
-Route::get('/sections{id}', [SectionsController::class, 'detail']);
+Route::get('/sections/{id}', [SectionsController::class, 'detail']);
