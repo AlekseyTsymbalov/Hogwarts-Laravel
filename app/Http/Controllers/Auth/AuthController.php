@@ -16,9 +16,12 @@ class AuthController extends Controller
     {
         $user = User::create($request->validated());
 
-        return $this->createdResponse(
-            new UserResource($user)
-        );
+        $token = $user->createToken('api')->plainTextToken;
+
+        return $this->createdResponse([
+            'user' => new UserResource($user),
+            'token' => $token,
+        ]);
     }
 
     public function signin(SigninRequest $request)
