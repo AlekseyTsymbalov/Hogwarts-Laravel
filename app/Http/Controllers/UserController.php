@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function show(Request $request)
+    public function profile(Request $request)
     {
         return $this->okResponse(
             new UserResource($request->user())
