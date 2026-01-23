@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     Route::post('/register', [RegisterController::class, 'register']);
     Route::post('/signin', [AuthController::class, 'signin'])->middleware('throttle:5,1');
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/signout', [AuthController::class, 'signout']);
+    });
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/auth/signout', [AuthController::class, 'signout']);
     Route::get('/profile', [ProfileController::class, 'show']);
 });
