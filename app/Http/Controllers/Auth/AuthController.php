@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SigninRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
 
@@ -26,5 +27,14 @@ class AuthController extends Controller
             'user' => new UserResource($user),
             'token' => $token,
         ]);
+    }
+
+    public function signout(Request $request)
+    {
+        $request->user()
+            ->currentAccessToken()
+            ->delete();
+
+        return $this->noContentResponse();
     }
 }
