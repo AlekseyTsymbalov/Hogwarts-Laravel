@@ -17,6 +17,13 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
+
+    Route::prefix('wishlist')->group(function () {
+        Route::post('/add', [WishlistController::class, 'add']);
+        Route::delete('/{id}', [WishlistController::class, 'delete']);
+        Route::get('/', [WishlistController::class, 'list']);
+        Route::delete('/', [WishlistController::class, 'clear']);
+    });
 });
 
 Route::get('/sections', [SectionsController::class, 'list']);
