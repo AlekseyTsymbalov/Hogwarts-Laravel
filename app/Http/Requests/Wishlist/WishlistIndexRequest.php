@@ -29,6 +29,8 @@ class WishlistIndexRequest extends FormRequest
 
     public function params(): array
     {
+        $validated = $this->validated();
+
         return [
             'limit'  => (int) ($validated['limit'] ?? 10),
             'offset' => (int) ($validated['offset'] ?? 0),

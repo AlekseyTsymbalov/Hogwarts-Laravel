@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddToWishlistRequest;
-use App\Http\Requests\WishlistIndexRequest;
-use App\Http\Requests\ProductListResource;
+use App\Http\Requests\Wishlist\AddToWishlistRequest;
+use App\Http\Requests\Wishlist\WishlistIndexRequest;
+use App\Http\Resources\ProductListResource;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
@@ -73,9 +73,10 @@ class WishlistController extends Controller
             ->get()
             ->keyBy('id');
 
-        $orderedProducts = $productIds
+        $orderedProducts = collect($productIds)
             ->map(fn ($id) => $products->get($id))
-            ->filter();
+            ->filter()
+            ->values();
 
         return $this->okResponse([
             'items' => ProductListResource::collection($orderedProducts),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SectionsController;
