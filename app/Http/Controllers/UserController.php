@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    /**
-     * Показать профиль конкретного пользователя.
-     */
+    public function profile(Request $request)
+    {
+        return $this->okResponse(
+            new UserResource($request->user())
+        );
+    }
 }
