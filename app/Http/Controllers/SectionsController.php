@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductListResource;
+use Illuminate\Http\Request;
 use App\Models\Section;
 
 class SectionsController extends Controller
@@ -16,7 +18,7 @@ class SectionsController extends Controller
         return $this->okResponse($sections);
     }
 
-    public function detail(int $id)
+    public function detail(Request $request, int $id)
     {
         $section = Section::query()
             ->where('active', true)
@@ -26,6 +28,19 @@ class SectionsController extends Controller
             return $this->notFoundResponse();
         }
 
-        return $this->okResponse($section);
+        $productsQuery = $section->products()->orderBy('id');
+
+        $categoryId = $request->query('category_id');
+
+        if ($categoryId !== null) {
+            $productsQuery->where('category_id', (int)$categoryId);
+        }
+
+        $products = $productsQuery->get();
+
+        return $this->okResponse([
+            'section' => $section,
+            'products' => ProductListResource::collection($products),
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SectionsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/sections', [SectionsController::class, 'list']);
 Route::get('/sections/{id}', [SectionsController::class, 'detail']);
+Route::get('/products/{id}', [ProductsController::class, 'detail']);
