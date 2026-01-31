@@ -13,4 +13,9 @@ class Section extends Model
         'active',
         'description',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
