@@ -14,7 +14,8 @@ class ProductsController extends Controller
         $params = $request->params();
 
         $query = Product::query()
-        ->orderBy($params['sort'], $params['order']);
+            ->where($params['section_id'] !== null, fn ($q) => $q->where('section_id', $params['section_id']))
+            ->orderBy($params['sort'], $params['order']);
 
         $total = (clone $query)->count();
 
