@@ -27,7 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::get('/sections', [SectionsController::class, 'list']);
-Route::get('/sections/{id}', [SectionsController::class, 'detail']);
-Route::get('/products', [ProductsController::class, 'list']);
-Route::get('/products/{id}', [ProductsController::class, 'detail']);
+Route::prefix('sections')->group(function () {
+    Route::get('/', [SectionsController::class, 'list']);
+    Route::get('/{id}', [SectionsController::class, 'detail']);
+});
+
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductsController::class, 'list']);
+    Route::get('/{id}', [ProductsController::class, 'detail']);
+});
