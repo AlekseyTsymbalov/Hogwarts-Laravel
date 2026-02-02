@@ -11,7 +11,7 @@ class BasketUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,16 @@ class BasketUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'quantity' => ['required', 'integer', 'min:1'],
+        ];
+    }
+
+    public function params(): array
+    {
+        $validated = $this->validated();
+
+        return [
+            'quantity' => (int) $validated['quantity'],
         ];
     }
 }

@@ -11,7 +11,7 @@ class BasketIndexRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,18 @@ class BasketIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'limit'  => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'offset' => ['sometimes', 'integer', 'min:0'],
+        ];
+    }
+
+    public function params(): array
+    {
+        $validated = $this->validated();
+
+        return [
+            'limit'  => (int) ($validated['limit'] ?? 10),
+            'offset' => (int) ($validated['offset'] ?? 0),
         ];
     }
 }
