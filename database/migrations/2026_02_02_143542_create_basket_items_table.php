@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('basket_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->foreignId('product_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->unsignedInteger('quantity');
+            $table->unique(['user_id', 'product_id']);
             $table->timestamps();
         });
     }
