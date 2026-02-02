@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\BasketController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SectionsController;
+use App\Http\Controllers\BasketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
