@@ -14,6 +14,21 @@ class BasketItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $base = (string)$this->product->price;
+        $final = $base;
+
+        return [
+            'item_id'  => $this->id,
+            'quantity' => (int) $this->quantity,
+            'product'  => [
+                'id'    => $this->product->id,
+                'name'  => $this->product->name,
+                'image' => $this->product->image,
+            ],
+            'price' => [
+                'base'  => $base,
+                'final' => $final,
+            ],
+        ];
     }
 }
