@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\CartItem;
+use App\Models\BasketItem;
 use App\Models\Product;
 use App\Models\Section;
 use App\Models\User;
@@ -11,7 +11,7 @@ use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class CartApiTest extends TestCase
+class BasketApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -63,21 +63,21 @@ class CartApiTest extends TestCase
     }
 
     #[Test]
-    public function it_adds_to_cart_idempotently(): void
+    public function it_adds_to_basket_idempotently(): void
     {
         [$user, $productIds] = $this->seedBase();
         Sanctum::actingAs($user);
 
         $payload = ['product_id' => $productIds[0]];
 
-        $this->postJson('/api/cart/add', $payload)
+        $this->postJson('/api/basket/add', $payload)
             ->assertStatus(201);
 
-        $this->postJson('/api/cart/add', $payload)
+        $this->postJson('/api/basket/add', $payload)
             ->assertStatus(201);
 
-        $this->assertDatabaseCount('cart_items', 1);
-        $this->assertDatabaseHas('cart_items', [
+        $this->assertDatabaseCount('basket_items', 1);
+        $this->assertDatabaseHas('basket_items', [
             'user_id' => $user->id,
             'product_id' => $productIds[0],
             'quantity' => 1,
@@ -90,39 +90,39 @@ class CartApiTest extends TestCase
         [$user, $productIds] = $this->seedBase();
         Sanctum::actingAs($user);
 
-        $item = CartItem::query()->create([
+        $item = BasketItem::query()->create([
             'user_id' => $user->id,
             'product_id' => $productIds[0],
             'quantity' => 1,
         ]);
 
-        $this->putJson("/api/cart/{$item->id}", ['quantity' => 3])
+        $this->putJson("/api/basket/{$item->id}", ['quantity' => 3])
             ->assertStatus(200)
             ->assertJsonPath('data.updated', true)
             ->assertJsonPath('data.quantity', 3);
 
-        $this->assertDatabaseHas('cart_items', [
+        $this->assertDatabaseHas('basket_items', [
             'id' => $item->id,
             'quantity' => 3,
         ]);
     }
 
     #[Test]
-    public function it_returns_cart_items_with_meta_and_summary_limit_offset(): void
+    public function it_returns_basket_items_with_meta_and_summary(): void
     {
         [$user, $productIds] = $this->seedBase();
         Sanctum::actingAs($user);
 
-        // создаём 3 позиции с quantity=1 => total_items = 3
+        // 3 позиции quantity=1 => total_items = 3
         foreach ($productIds as $pid) {
-            CartItem::query()->create([
+            BasketItem::query()->create([
                 'user_id' => $user->id,
                 'product_id' => $pid,
                 'quantity' => 1,
             ]);
         }
 
-        $response = $this->getJson('/api/cart?limit=2&offset=0')
+        $response = $this->getJson('/api/basket?limit=2&offset=0')
             ->assertStatus(200)
             ->assertJsonPath('data.meta.total', 3)
             ->assertJsonPath('data.meta.limit', 2)
@@ -131,52 +131,51 @@ class CartApiTest extends TestCase
         $items = $response->json('data.items');
         $this->assertCount(2, $items);
 
-        // проверяем структуру item
+        // структура item
         $this->assertArrayHasKey('item_id', $items[0]);
         $this->assertArrayHasKey('quantity', $items[0]);
         $this->assertArrayHasKey('product', $items[0]);
         $this->assertArrayHasKey('price', $items[0]);
 
-        // summary считается по текущей странице (limit=2)
-        // на первой странице 2 товара: 10 + 20 или 30 + 20 — зависит от порядка id desc
-        // поэтому проверим только наличие ключей и типовую логику
-        $this->assertNotNull($response->json('data.summary.total_items'));
-        $this->assertNotNull($response->json('data.summary.total_base'));
-        $this->assertNotNull($response->json('data.summary.total_final'));
+        // summary считается по всей корзине (без пагинации)
+        $response
+            ->assertJsonPath('data.summary.total_items', 3)
+            ->assertJsonPath('data.summary.total_base', '60.00')
+            ->assertJsonPath('data.summary.total_final', '60.00');
     }
 
     #[Test]
-    public function it_deletes_cart_item_without_error_when_missing(): void
+    public function it_deletes_basket_item_without_error_when_missing(): void
     {
         [$user] = $this->seedBase();
         Sanctum::actingAs($user);
 
-        $this->deleteJson('/api/cart/999999')
+        $this->deleteJson('/api/basket/999999')
             ->assertStatus(200)
             ->assertJsonPath('data.deleted', true);
 
-        $this->assertDatabaseCount('cart_items', 0);
+        $this->assertDatabaseCount('basket_items', 0);
     }
 
     #[Test]
-    public function it_clears_only_current_user_cart(): void
+    public function it_clears_only_current_user_basket(): void
     {
         [$user, $productIds] = $this->seedBase();
 
         $otherUser = User::factory()->create();
 
-        CartItem::query()->create([
+        BasketItem::query()->create([
             'user_id' => $user->id,
             'product_id' => $productIds[0],
             'quantity' => 1,
         ]);
-        CartItem::query()->create([
+        BasketItem::query()->create([
             'user_id' => $user->id,
             'product_id' => $productIds[1],
             'quantity' => 2,
         ]);
 
-        CartItem::query()->create([
+        BasketItem::query()->create([
             'user_id' => $otherUser->id,
             'product_id' => $productIds[2],
             'quantity' => 3,
@@ -184,20 +183,20 @@ class CartApiTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $this->deleteJson('/api/cart')
+        $this->deleteJson('/api/basket')
             ->assertStatus(200)
             ->assertJsonPath('data.cleared', true);
 
-        $this->assertDatabaseMissing('cart_items', [
+        $this->assertDatabaseMissing('basket_items', [
             'user_id' => $user->id,
             'product_id' => $productIds[0],
         ]);
-        $this->assertDatabaseMissing('cart_items', [
+        $this->assertDatabaseMissing('basket_items', [
             'user_id' => $user->id,
             'product_id' => $productIds[1],
         ]);
 
-        $this->assertDatabaseHas('cart_items', [
+        $this->assertDatabaseHas('basket_items', [
             'user_id' => $otherUser->id,
             'product_id' => $productIds[2],
         ]);
