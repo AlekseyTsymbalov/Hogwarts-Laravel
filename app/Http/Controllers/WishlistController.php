@@ -14,7 +14,7 @@ class WishlistController extends Controller
     public function add(AddToWishlistRequest $request)
     {
         $userId = $request->user()->id;
-        $productId = (int) $request->validated()['product_id'];
+        $productId = (int)$request->validated()['product_id'];
 
         $wishlist = Wishlist::query()->firstOrCreate([
             'user_id' => $userId,
@@ -61,8 +61,8 @@ class WishlistController extends Controller
             return $this->okResponse([
                 'items' => [],
                 'meta' => [
-                    'total'  => $total,
-                    'limit'  => $params['limit'],
+                    'total' => $total,
+                    'limit' => $params['limit'],
                     'offset' => $params['offset'],
                 ],
             ]);
@@ -74,15 +74,15 @@ class WishlistController extends Controller
             ->keyBy('id');
 
         $orderedProducts = collect($productIds)
-            ->map(fn ($id) => $products->get($id))
+            ->map(fn($id) => $products->get($id))
             ->filter()
             ->values();
 
         return $this->okResponse([
             'items' => ProductListResource::collection($orderedProducts),
             'meta' => [
-                'total'  => $total,
-                'limit'  => $params['limit'],
+                'total' => $total,
+                'limit' => $params['limit'],
                 'offset' => $params['offset'],
             ],
         ]);
