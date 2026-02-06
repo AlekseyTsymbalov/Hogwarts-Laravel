@@ -23,10 +23,10 @@ class ProductsIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'limit'      => ['sometimes', 'integer', 'min:1', 'max:50'],
-            'offset'     => ['sometimes', 'integer', 'min:0'],
-            'sort'       => ['sometimes', 'string', Rule::in(['id', 'price', 'name', 'created_at'])],
-            'order'      => ['sometimes', 'string', Rule::in(['asc', 'desc'])],
+            'limit' => ['sometimes', 'integer', 'min:1', 'max:50'],
+            'offset' => ['sometimes', 'integer', 'min:0'],
+            'sort' => ['sometimes', 'string', Rule::in(['id', 'price', 'name', 'created_at'])],
+            'order' => ['sometimes', 'string', Rule::in(['asc', 'desc'])],
             'section_id' => ['sometimes', 'integer', 'exists:sections,id'],
         ];
     }
@@ -36,11 +36,11 @@ class ProductsIndexRequest extends FormRequest
         $validated = $this->validated();
 
         return [
-            'limit'  => (int) ($validated['limit'] ?? 10),
-            'offset' => (int) ($validated['offset'] ?? 0),
-            'sort'   => (string) ($validated['sort'] ?? 'id'),
-            'order'  => (string) ($validated['order'] ?? 'desc'),
-            'section_id' => isset($validated['section_id']) ? (int) ($validated['section_id']) : null,
+            'limit' => (int)($validated['limit'] ?? 10),
+            'offset' => (int)($validated['offset'] ?? 0),
+            'sort' => (string)($validated['sort'] ?? 'id'),
+            'order' => (string)($validated['order'] ?? 'desc'),
+            'section_id' => isset($validated['section_id']) ? (int)($validated['section_id']) : null,
         ];
     }
 }
