@@ -18,7 +18,7 @@ class SectionsController extends Controller
         return $this->okResponse($sections);
     }
 
-    public function detail(Request $request, int $id)
+    public function detail(int $id)
     {
         $section = Section::query()
             ->where('active', true)
@@ -28,19 +28,6 @@ class SectionsController extends Controller
             return $this->notFoundResponse();
         }
 
-        $productsQuery = $section->products()->orderBy('id');
-
-        $categoryId = $request->query('category_id');
-
-        if ($categoryId !== null) {
-            $productsQuery->where('category_id', (int)$categoryId);
-        }
-
-        $products = $productsQuery->get();
-
-        return $this->okResponse([
-            'section' => $section,
-            'products' => ProductListResource::collection($products),
-        ]);
+        return $this->okResponse($section);
     }
 }

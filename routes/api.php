@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SectionsController;
@@ -17,8 +18,21 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
+
+    Route::prefix('wishlist')->group(function () {
+        Route::post('/add', [WishlistController::class, 'add']);
+        Route::delete('/{id}', [WishlistController::class, 'delete']);
+        Route::get('/', [WishlistController::class, 'list']);
+        Route::delete('/', [WishlistController::class, 'clear']);
+    });
 });
 
-Route::get('/sections', [SectionsController::class, 'list']);
-Route::get('/sections/{id}', [SectionsController::class, 'detail']);
-Route::get('/products/{id}', [ProductsController::class, 'detail']);
+Route::prefix('sections')->group(function () {
+    Route::get('/', [SectionsController::class, 'list']);
+    Route::get('/{id}', [SectionsController::class, 'detail']);
+});
+
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductsController::class, 'list']);
+    Route::get('/{id}', [ProductsController::class, 'detail']);
+});
