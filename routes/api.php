@@ -21,11 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
 
     Route::prefix('basket')->group(function () {
-        Route::get('/add', [BasketController::class, 'add']);
-        Route::get('/{id}', [BasketController::class, 'update']);
-        Route::get('/{id}', [BasketController::class, 'delete']);
+        Route::post('/add', [BasketController::class, 'add']);
+        Route::put('/{id}', [BasketController::class, 'update']);
+        Route::delete('/{id}', [BasketController::class, 'delete']);
         Route::get('/', [BasketController::class, 'list']);
-        Route::get('/', [BasketController::class, 'clear']);
+        Route::delete('/', [BasketController::class, 'clear']);
     });
 
     Route::prefix('wishlist')->group(function () {
