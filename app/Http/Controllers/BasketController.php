@@ -84,21 +84,25 @@ class BasketController extends Controller
         $baseQuery = BasketItem::query()
             ->where('user_id', $userId);
 
-        $total = (clone $baseQuery)->count();
+        $total = BasketItem::query()
+            ->where('user_id', $userId)
+            ->count();
 
-        $items = (clone $baseQuery)
+        $items = BasketItem::query()
+            ->where('user_id', $userId)
             ->with('product')
             ->orderBy('id', 'desc')
             ->limit($params['limit'])
             ->offset($params['offset'])
             ->get();
 
-        $allItems = (clone $baseQuery)
+        $allItems = BasketItem::query()
+            ->where('user_id', $userId)
             ->with('product:id,price')
             ->get();
 
         $summary = $priceService->summary($allItems);
-
+        //dd($summary);
         return $this->okResponse([
             'items' => BasketItemResource::collection($items),
             'meta'  => [

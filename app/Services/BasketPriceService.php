@@ -20,13 +20,13 @@ class BasketPriceService
             $totalItems += $qty;
 
             $priceCents = $this->toCents($item->product->price);
-            $totalCents = $priceCents * $qty;
+            $totalCents += $priceCents * $qty;
         }
 
         return [
-            'total_Items' => $totalItems,
-            'total_Base' => $this->fromCents($totalCents),
-            'total_Final' => $this->fromCents($totalCents),
+            'total_items' => $totalItems,
+            'total_base' => $this->fromCents($totalCents),
+            'total_final' => $this->fromCents($totalCents),
         ];
     }
 
