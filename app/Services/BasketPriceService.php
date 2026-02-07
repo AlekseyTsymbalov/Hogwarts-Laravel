@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Services;
 
 use Illuminate\Support\Collection;
+use InvalidArgumentException;
 
 class BasketPriceService
 {
@@ -12,32 +13,41 @@ class BasketPriceService
     {
         $totalItems = 0;
 
-        $totalBase = '0.00';
-        $totalFinal = '0.00';
+        $totalCents = 0;
 
         foreach ($items as $item) {
             $qty = (int) $item->quantity;
             $totalItems += $qty;
 
-            $baseUnit = $item->money($item->product->price);
-            $finalUnit = $baseUnit;
-
-            $lineBase = bcmul($baseUnit, (string) $qty, 2);
-            $lineFinal = bcmul($finalUnit, (string) $qty, 2);
-
-            $totalBase = bcadd($totalBase, $lineBase, 2);
-            $totalFinal = bcadd($totalFinal, $lineFinal, 2);
+            $priceCents = $this->toCents($item->product->price);
+            $totalCents = $priceCents * $qty;
         }
 
         return [
             'total_Items' => $totalItems,
-            'total_Base' => $totalBase,
-            'total_Final' => $totalFinal,
+            'total_Base' => $this->fromCents($totalCents),
+            'total_Final' => $this->fromCents($totalCents),
         ];
     }
 
-    private function money($value): string
+    private function toCents(mixed $price): int
     {
-        return bcadd((string) $value, '0', 2);
+        if (!is_string($price)) {
+            throw new InvalidArgumentException('Цена должна быть DECIMAL');
+        }
+
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', $price)) {
+            throw new \http\Exception\InvalidArgumentException("Неправильный формат суммы {price}");
+        }
+
+        [$int, $fraction] = array_pad(explode('.', $price), 2, '00');
+        $fraction = str_pad($fraction, 2, '0');
+
+        return ((int) $int * 100) + (int) $fraction;
+    }
+
+    private function fromCents(int $cents): string
+    {
+        return number_format($cents / 100, 2, '.', '');
     }
 }
