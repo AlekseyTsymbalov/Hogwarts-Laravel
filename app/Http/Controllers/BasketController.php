@@ -81,9 +81,6 @@ class BasketController extends Controller
         $userId = $request->user()->id;
         $params = $request->params();
 
-        $baseQuery = BasketItem::query()
-            ->where('user_id', $userId);
-
         $total = BasketItem::query()
             ->where('user_id', $userId)
             ->count();
@@ -102,7 +99,6 @@ class BasketController extends Controller
             ->get();
 
         $summary = $priceService->summary($allItems);
-        //dd($summary);
         return $this->okResponse([
             'items' => BasketItemResource::collection($items),
             'meta'  => [
