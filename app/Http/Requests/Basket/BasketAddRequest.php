@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Wishlist;
+namespace App\Http\Requests\Basket;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddToWishlistRequest extends FormRequest
+class BasketAddRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,15 @@ class AddToWishlistRequest extends FormRequest
     {
         return [
             'product_id' => ['required', 'integer', 'exists:products,id'],
+        ];
+    }
+
+    public function params(): array
+    {
+        $validated = $this->validated();
+
+        return [
+            'product_id' => (int) $validated['product_id'],
         ];
     }
 }

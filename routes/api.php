@@ -4,6 +4,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\SectionsController;
+use App\Http\Controllers\BasketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,14 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
+
+    Route::prefix('basket')->group(function () {
+        Route::post('/add', [BasketController::class, 'add']);
+        Route::put('/{id}', [BasketController::class, 'update']);
+        Route::delete('/{id}', [BasketController::class, 'delete']);
+        Route::get('/', [BasketController::class, 'list']);
+        Route::delete('/', [BasketController::class, 'clear']);
+    });
 
     Route::prefix('wishlist')->group(function () {
         Route::post('/add', [WishlistController::class, 'add']);
